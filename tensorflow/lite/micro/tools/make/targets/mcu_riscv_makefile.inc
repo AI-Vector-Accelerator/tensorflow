@@ -1,13 +1,18 @@
 # Settings for RISCV 32-bit MCU toolchain.
 ifeq ($(TARGET), riscv32_mcu)
-  TARGET_ARCH := riscv32_mcu
-  TARGET_TOOLCHAIN_PREFIX := riscv64-unknown-elf-
+
+  ifeq ($(TARGET_ARCH), cv32e40p)
+    TARGET_TOOLCHAIN_PREFIX := riscv32-unknown-elf-
+
+  else
+    TARGET_ARCH := riscv32_mcu
+    TARGET_TOOLCHAIN_PREFIX := riscv64-unknown-elf-
+  endif
 
   $(eval $(call add_third_party_download,$(RISCV_TOOLCHAIN_URL),$(RISCV_TOOLCHAIN_MD5),riscv_toolchain,))
   $(eval $(call add_third_party_download,$(SIFIVE_FE310_LIB_URL),$(SIFIVE_FE310_LIB_MD5),sifive_fe310_lib,))
 
   PLATFORM_FLAGS = \
-    -march=rv32imac \
     -mabi=ilp32 \
     -mcmodel=medany \
     -mexplicit-relocs \
@@ -36,6 +41,14 @@ ifeq ($(TARGET), riscv32_mcu)
     -fno-use-cxa-atexit \
     -Os
 
+
+  # Set the extensions used in a particular architecture
+  ifeq ($(TARGET_ARCH), cv32e40p)
+    PLATFORM_FLAGS += -march=rv32imc
+
+  else
+    PLATFORM_FLAGS += -march=rv32imac
+
   CXXFLAGS += $(PLATFORM_FLAGS) \
     -fpermissive \
     -fno-rtti \
@@ -54,11 +67,22 @@ ifeq ($(TARGET), riscv32_mcu)
   MICROLITE_CC_SRCS += \
     $(wildcard tensorflow/lite/micro/riscv32_mcu/*.cc)
 
-  LDFLAGS += \
-   -T$(MAKEFILE_DIR)/downloads/sifive_fe310_lib/bsp/env/freedom-e300-hifive1/flash.lds \
-   -nostartfiles \
-   -L$(MAKEFILE_DIR)/downloads/sifive_fe310_lib/bsp/env \
-   --specs=nano.specs
+  # Set the linking instructions for each supported architecture
+  ifeq ($(TARGET_ARCH), cv32e40p)
+    LDFLAGS += -L $(MAKEFILE_DIR)/targets/cv32e40p \
+      -l cv-verif \
+      -T $(MAKEFILE_DIR)/targets/cv32e40p/link.ld \
+      -nostartfiles \
+      $(MAKEFILE_DIR)/targets/cv32e40p/crtbegin.o \
+      --specs=nano.specs -u _printf_float
+
+  else
+    LDFLAGS += \
+      -T$(MAKEFILE_DIR)/downloads/sifive_fe310_lib/bsp/env/freedom-e300-hifive1/flash.lds \
+      -nostartfiles \
+      -L$(MAKEFILE_DIR)/downloads/sifive_fe310_lib/bsp/env \
+      --specs=nano.specs
+  endif
 
 # These are microcontroller-specific rules for converting the ELF output
 # of the linker into a binary image that can be loaded directly.
