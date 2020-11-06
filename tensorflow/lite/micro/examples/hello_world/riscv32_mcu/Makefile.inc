@@ -1,4 +1,4 @@
-ifeq ($(TARGET), riscv32_mcu)
+ifeq ($(TARGET), mcu_riscv)
   ifeq ($(TARGET_ARCH), cv32e40p)
     LDFLAGS += -L. -Wl,--start-group -lc -Wl,--end-group
 

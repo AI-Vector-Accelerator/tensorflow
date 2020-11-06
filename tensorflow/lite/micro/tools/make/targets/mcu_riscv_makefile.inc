@@ -1,5 +1,5 @@
 # Settings for RISCV 32-bit MCU toolchain.
-ifeq ($(TARGET), riscv32_mcu)
+ifeq ($(TARGET), mcu_riscv)
 
   ifeq ($(TARGET_ARCH), cv32e40p)
     TARGET_TOOLCHAIN_PREFIX := riscv32-unknown-elf-
@@ -44,10 +44,12 @@ ifeq ($(TARGET), riscv32_mcu)
 
   # Set the extensions used in a particular architecture
   ifeq ($(TARGET_ARCH), cv32e40p)
-    PLATFORM_FLAGS += -march=rv32imc
+    PLATFORM_FLAGS += -march=rv32imc \
+      -DCV32E40P
 
   else
     PLATFORM_FLAGS += -march=rv32imac
+  endif
 
   CXXFLAGS += $(PLATFORM_FLAGS) \
     -fpermissive \
