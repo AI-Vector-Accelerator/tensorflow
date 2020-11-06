@@ -26,7 +26,11 @@ inline float TfLiteMin(const float& x, const float& y) {
 #else
 template <class T>
 inline T TfLiteMin(const T& x, const T& y) {
+#ifdef CV32E40P
+  return fmin(x, y);
+#else 
   return std::fmin(x, y);
+#endif //CV32E40P
 }
 #endif
 

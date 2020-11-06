@@ -26,7 +26,14 @@ inline float TfLiteMax(const float& x, const float& y) {
 #else
 template <class T>
 inline T TfLiteMax(const T& x, const T& y) {
+
+#ifdef CV32E40P
+  return fmax(x, y);
+#else
   return std::fmax(x, y);
+#endif //CV32E40P
+
+
 }
 #endif
 

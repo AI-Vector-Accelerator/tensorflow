@@ -13,6 +13,11 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ==============================================================================*/
 
+#ifdef CV32E40P
+#include <iostream>
+#include <iomanip>
+#endif //CV32E40P
+
 #include "tensorflow/lite/micro/examples/hello_world/main_functions.h"
 
 #include "tensorflow/lite/micro/all_ops_resolver.h"
@@ -88,6 +93,7 @@ void setup() {
 
 // The name of this function is important for Arduino compatibility.
 void loop() {
+
   // Calculate an x value to feed into the model. We compare the current
   // inference_count to the number of inferences per cycle to determine
   // our position within the range of possible x values the model was
@@ -117,6 +123,9 @@ void loop() {
   // Output the results. A custom HandleOutput function can be implemented
   // for each supported hardware target.
   HandleOutput(error_reporter, x, y);
+#ifdef CV32E40P
+  std::cout << std::setprecision(3) << "Result - x_val: " << x << "\ty_val: " << y << std::endl;
+#endif //CV32E40P
 
   // Increment the inference_counter, and reset it if we have reached
   // the total number per cycle
