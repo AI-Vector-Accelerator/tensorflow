@@ -121,12 +121,18 @@ template <typename Q>
 inline void Relu6Quantized(Q lower, Q upper, const RuntimeShape& input_shape,
                            const Q* input_data,
                            const RuntimeShape& output_shape, Q* output_data) {
-  const int flat_size = MatchingFlatSize(input_shape, output_shape);
-  for (int i = 0; i < flat_size; ++i) {
+  const unsigned int flat_size = MatchingFlatSize(input_shape, output_shape);
+
+  int8_t* input = static_cast<int8_t*> input_data;
+  int8_t* output = static_cast<int8_t*> input_data;
+  vect_ReLu(flat_size, input_data, output);
+  output_data = static_cast<Q*>output;
+
+  /*for (int i = 0; i < flat_size; ++i) {
     const Q val = input_data[i];
     const Q clamped = val > upper ? upper : val < lower ? lower : val;
     output_data[i] = clamped;
-  }
+  }*/
 }
 
 void* ReluInit(TfLiteContext* context, const char* buffer, size_t length) {
