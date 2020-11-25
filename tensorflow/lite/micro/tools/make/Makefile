@@ -214,7 +214,7 @@ endif
 # runtime that can be linked in to other programs.
 MICROLITE_LIB_NAME := libtensorflow-microlite.a
 
-# These two must be defined before we include the target specific Makefile.inc
+# These two must be defined before we include the target  specific Makefile.inc
 # because we filter out the examples that are not supported for those targets.
 # See targets/xtensa_xpg_makefile.inc for an example.
 #
@@ -223,14 +223,16 @@ MICROLITE_LIB_NAME := libtensorflow-microlite.a
 # examples/micro_speech/Makefile.inc for an example. At the same time, we
 # search till an arbitrary depth for files named Makefile_internal.inc as a way
 # to bypass this check and allow for deeper directory structures.
-MICRO_LITE_EXAMPLE_TESTS := $(shell find tensorflow/lite/micro/examples/ -maxdepth 2 -name Makefile.inc)
-MICRO_LITE_EXAMPLE_TESTS += $(shell find tensorflow/lite/micro/examples/ -name Makefile_internal.inc)
+#MICRO_LITE_EXAMPLE_TESTS := $(shell find tensorflow/lite/micro/examples/ -maxdepth 2 -name Makefile.inc)
+#MICRO_LITE_EXAMPLE_TESTS += $(shell find tensorflow/lite/micro/examples/ -name Makefile_internal.inc)
 MICRO_LITE_BENCHMARKS := $(wildcard tensorflow/lite/micro/benchmarks/Makefile.inc)
 
 MICROLITE_TEST_SRCS := \
-$(wildcard tensorflow/lite/micro/*test.cc) \
+$(wildcard tensorflow/lite/micro/kernels/conv_test.cc) \
+#$(wildcard tensorflow/lite/micro/*test.cc) \
 $(wildcard tensorflow/lite/micro/kernels/*test.cc) \
-$(wildcard tensorflow/lite/micro/memory_planner/*test.cc)
+#$(wildcard tensorflow/lite/micro/memory_planner/*test.cc)
+
 
 # TODO(b/152645559): move all benchmarks to benchmarks directory.
 MICROLITE_BENCHMARK_SRCS := \
