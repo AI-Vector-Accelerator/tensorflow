@@ -73,11 +73,7 @@ ifeq ($(TARGET), mcu_riscv)
   ifeq ($(TARGET_ARCH), cv32e40p)
 
     ifneq (,$(findstring spike,$(TAGS)))
-
-      $(info "spike" found in TAGS)
-
       LDFLAGS += --specs=nano.specs -u _printf_float
-
     else
       LDFLAGS += -L $(MAKEFILE_DIR)/targets/cv32e40p \
         -l cv-verif \
@@ -85,6 +81,12 @@ ifeq ($(TARGET), mcu_riscv)
         -nostartfiles \
         $(MAKEFILE_DIR)/targets/cv32e40p/crtbegin.o \
         --specs=nano.specs -u _printf_float
+    endif
+
+    ifneq (,$(findstring cv32e40p-ml, $(TAGS)))
+      LDFLAGS += \
+        $(MAKEFILE_DIR)/targets/cv32e40p/vector_operations.o \
+        $(MAKEFILE_DIR)/targets/cv32e40p/vector_operations_assembly.o 
     endif
 
   else
