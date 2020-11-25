@@ -125,7 +125,7 @@ inline void Relu6Quantized(Q lower, Q upper, const RuntimeShape& input_shape,
 
   int8_t* input = static_cast<int8_t*> input_data;
   int8_t* output = static_cast<int8_t*> input_data;
-  vect_ReLu(flat_size, input_data, output);
+  vect_ReLu6_Bound(flat_size, input_data, output,static_cast<int8_t>lower,static_cast<int8_t>upper);
   output_data = static_cast<Q*>output;
 
   /*for (int i = 0; i < flat_size; ++i) {
