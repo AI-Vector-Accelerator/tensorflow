@@ -20,6 +20,9 @@ limitations under the License.
 #include "tensorflow/lite/micro/test_helpers.h"
 #include "tensorflow/lite/micro/testing/micro_test.h"
 
+#include "cycles_riscv.h"
+#include <iostream>
+
 namespace tflite {
 namespace testing {
 namespace {
@@ -60,7 +63,9 @@ TfLiteStatus InvokeConv(TfLiteTensor* tensors, int tensors_size, T* output_data,
   TfLiteIntArray* inputs_array = IntArrayFromInts(inputs_array_data);
   int outputs_array_data[] = {1, 3};
   TfLiteIntArray* outputs_array = IntArrayFromInts(outputs_array_data);
-
+  TfLiteStatus output;
+  unsigned long startCycles, endCycles, cyclesToRun;
+	
   const TfLiteRegistration registration = Register_CONV_2D();
   micro::KernelRunner runner(
       registration, tensors, tensors_size, inputs_array, outputs_array,
@@ -71,7 +76,16 @@ TfLiteStatus InvokeConv(TfLiteTensor* tensors, int tensors_size, T* output_data,
   if (status != kTfLiteOk) {
     return status;
   }
-  return runner.Invoke();
+  
+  //std::cout<<"	Invoke conv\n";
+  startCycles=getCycles();
+  output = runner.Invoke();
+  endCycles=getCycles();
+  cyclesToRun=endCycles-startCycles;
+ // std::cout<<"	conv finished\n";
+  std::cout<<"	Convolution finished, cyclesToRun = "<<cyclesToRun<<std::endl;
+  
+  return output;
 }
 
 template <typename T>
