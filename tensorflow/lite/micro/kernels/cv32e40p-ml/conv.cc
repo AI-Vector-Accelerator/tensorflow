@@ -13,7 +13,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ==============================================================================*/
 
-#include <iostream>
+//#include <iostream>
 
 #include "tensorflow/lite/kernels/internal/reference/conv.h"
 
@@ -192,7 +192,7 @@ void EvalQuantized(TfLiteContext* context, TfLiteNode* node,
   const int32_t filter_offset = -data.filter_zero_point;
   const int32_t output_offset = data.output_zero_point;
 
-  std::cout << "EvalQuantized" << std::endl;
+  //std::cout<<" EvalQuantized  \n";
 
   // TODO(b/154032858): Investigate removing extra copies.
   ConvParams op_params;
@@ -242,6 +242,8 @@ void EvalQuantizedPerChannel(TfLiteContext* context, TfLiteNode* node,
   op_params.quantized_activation_min = data.output_activation_min;
   op_params.quantized_activation_max = data.output_activation_max;
 
+  //std::cout<<" EvalQuantizedPerChannel  \n";
+
   reference_integer_ops::ConvPerChannel(
       op_params, data.per_channel_output_multiplier,
       data.per_channel_output_shift, tflite::micro::GetTensorShape(input),
@@ -274,6 +276,8 @@ void EvalFloat(TfLiteContext* context, TfLiteNode* node,
   op_params.float_activation_min = output_activation_min;
   op_params.float_activation_max = output_activation_max;
 
+  //std::cout<<" EvalFloat  \n";
+ 
   reference_ops::Conv(op_params, tflite::micro::GetTensorShape(input),
                       tflite::micro::GetTensorData<float>(input),
                       tflite::micro::GetTensorShape(filter),
