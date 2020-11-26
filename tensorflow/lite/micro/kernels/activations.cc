@@ -133,7 +133,7 @@ else
     vect_and(intermidiate9,mask,intermidiate5);
     vect_rshift(flat_size,intermidiate9,7,intermidiate6); //    vect_less_than_I(flat_size,intermidiate9,0,intermidiate6);
     vect_add(flat_size,intermidiate6,mask2,intermidiate7);
-    vect_sub(flat_size,intermidiate5,intermidiate7,intermidiate11);
+    vect_sub(flat_size,intermidiate7,intermidiate5,intermidiate11);
     vect_rshift(flat_size,intermidiate11,7,intermidiate10); //vect_greater_than(flat_size,intermidiate5, intermidiate7,intermidiate10);
     vect_add(flat_size,intermidiate9,intermidiate10,MBQM);
 
