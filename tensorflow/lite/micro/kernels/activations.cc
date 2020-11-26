@@ -209,7 +209,7 @@ inline void Relu6Quantized(Q lower, Q upper, const RuntimeShape& input_shape,
   const unsigned int flat_size = MatchingFlatSize(input_shape, output_shape);
 
   int8_t* input = static_cast<int8_t*> input_data;
-  int8_t* output = static_cast<int8_t*> input_data;
+  int8_t* output = malloc(sizeof(int8_t)*flat_size);;
   vect_ReLu6_Bound(flat_size, input_data, output,static_cast<int8_t>lower,static_cast<int8_t>upper);
   
   output_data = static_cast<Q*>output;
