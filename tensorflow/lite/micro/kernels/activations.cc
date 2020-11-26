@@ -52,17 +52,102 @@ inline void ReluQuantized(const ReluOpData& data,
                           const RuntimeShape& output_shape, const T* input_data,
                           T* output_data) {
   const int flat_size = MatchingFlatSize(input_shape, output_shape);
-  for (int i = 0; i < flat_size; ++i) {
-    const int32_t val = static_cast<int32_t>(input_data[i]);
-    int32_t clamped =
-        data.params.output_offset +
-        MultiplyByQuantizedMultiplier(val - data.params.input_offset,
-                                      data.params.output_multiplier,
-                                      data.params.output_shift);
-    clamped = std::max(data.params.quantized_activation_min, clamped);
-    clamped = std::min(data.params.quantized_activation_max, clamped);
-    output_data[i] = static_cast<T>(clamped);
+    int8_t* MBQM = malloc(sizeof(int8_t)*flat_size);
+
+  int8_t* input_with_off =  malloc(sizeof(int8_t)*flat_size); 
+  int8_t inoffset  =  static_cast<int8_t> data.params.input_offset;
+  int8_t shift  =  static_cast<int8_t> data.params.output_shift;
+  int8_t outmult = static_cast<int8_t> data.params.output_multiplier;
+
+  vect_sub_I(flat_size,static_cast<int8_t*> input_data, inoffset,input_with_off);
+
+  int16_t shift2 = 0;
+
+  int a = shift>0;
+  int shift3 = 0;
+ 
+  if (a)
+  {
+      int16_t shift2 = 7;
+      shift3 = 1<<(6-shift);
+
   }
+  else
+  {
+    int16_t shift2 = -shift + 7;
+    shift3 = 1<<(6);
+  }
+
+    int16_t shift4 = 1 - shift3;
+    int16_t* intermidiate =  malloc(sizeof(int16_t)*flat_size);
+    int16_t* intermidiate2 =  malloc(sizeof(int16_t)*flat_size);
+    int16_t* intermidiate4 =  malloc(sizeof(int16_t)*flat_size);
+    int8_t* intermidiate5 =  malloc(sizeof(int8_t)*flat_size);
+    int8_t* intermidiate6 =  malloc(sizeof(int8_t)*flat_size);
+    int8_t* intermidiate7 =  malloc(sizeof(int8_t)*flat_size);
+    int8_t* intermidiate9 =  malloc(sizeof(int8_t)*flat_size);
+    int8_t* intermidiate10 =  malloc(sizeof(int8_t)*flat_size);
+    int8_t* intermidiate11 =  malloc(sizeof(int8_t)*flat_size);
+
+
+ bool overflow = false;
+
+if (outmult == std::numeric_limits<std::int8_t>::min())
+{
+    for (size_t i = 0; i < flat_size; i++)
+    {
+     overflow = input_with_off[i] == outmult;
+    }
+}
+
+    vect_mul_s_wide(flat_size,input_with_off,outmult,intermidiate);
+    
+    for (size_t i = 0; i < flat_size; i++)
+    {
+      if (intermidiate[i]>0)
+      {
+         intermidiate2[i]=intermidiate[i] + shift3;
+      }
+      else
+      {
+        intermidiate2[i]=intermidiate[i] + shift4;
+      }
+    }
+    vect_rshift_16(flat_size,intermidiate2,shift2,intermidiate4);
+    intermidiate9 = static_cast<int8_t*> intermidiate4;
+
+ for (size_t i = 0; i < flat_size; i++)
+    {
+    intermidiate9[i] = overflow ? std::numeric_limits<std::int32_t>::max() : intermidiate9[i];
+    }
+
+
+if (a)
+{
+   MBQM = intermidiate9;
+}
+else
+{
+    int8_t mask = ((1ll << shift2) - 1); 
+    int8_t mask2 = mask >> 1;
+    vect_and(intermidiate9,mask,intermidiate5);
+    vect_rshift(flat_size,intermidiate9,7,intermidiate6); //    vect_less_than_I(flat_size,intermidiate9,0,intermidiate6);
+    vect_add(flat_size,intermidiate6,mask2,intermidiate7);
+    vect_sub(flat_size,intermidiate5,intermidiate7,intermidiate11);
+    vect_rshift(flat_size,intermidiate11,7,intermidiate10); //vect_greater_than(flat_size,intermidiate5, intermidiate7,intermidiate10);
+    vect_add(flat_size,intermidiate9,intermidiate10,MBQM);
+
+}
+
+    
+  int8_t* input = malloc(sizeof(int8_t)*flat_size);   
+  int8_t offset = static_cast<int8_t>  data.params.output_offset;                
+  vect_add_I(flat_size,MBQM,offset,input);
+  int8_t lower = static_cast<int8_t> data.params.quantized_activation_min;
+  int8_t upper = static_cast<int8_t> data.params.quantized_activation_max;
+  int8_t* output = malloc(sizeof(int8_t)*flat_size);   
+  vect_ReLu6_Bound(flat_size,input,output,lower,upper);
+  output_data = static_cast<T*>(output);
 }
 
 template <typename T>
@@ -126,13 +211,10 @@ inline void Relu6Quantized(Q lower, Q upper, const RuntimeShape& input_shape,
   int8_t* input = static_cast<int8_t*> input_data;
   int8_t* output = static_cast<int8_t*> input_data;
   vect_ReLu6_Bound(flat_size, input_data, output,static_cast<int8_t>lower,static_cast<int8_t>upper);
+  
   output_data = static_cast<Q*>output;
 
-  /*for (int i = 0; i < flat_size; ++i) {
-    const Q val = input_data[i];
-    const Q clamped = val > upper ? upper : val < lower ? lower : val;
-    output_data[i] = clamped;
-  }*/
+
 }
 
 void* ReluInit(TfLiteContext* context, const char* buffer, size_t length) {
