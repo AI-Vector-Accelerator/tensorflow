@@ -13,8 +13,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ==============================================================================*/
 
-#include <iostream>
-
 #include "tensorflow/lite/kernels/internal/reference/conv.h"
 
 #include "tensorflow/lite/c/builtin_op_data.h"
@@ -191,8 +189,6 @@ void EvalQuantized(TfLiteContext* context, TfLiteNode* node,
   const int32_t input_offset = -data.input_zero_point;
   const int32_t filter_offset = -data.filter_zero_point;
   const int32_t output_offset = data.output_zero_point;
-
-  std::cout << "EvalQuantized" << std::endl;
 
   // TODO(b/154032858): Investigate removing extra copies.
   ConvParams op_params;
