@@ -68,13 +68,13 @@ inline void ReluQuantized(const ReluOpData& data,
  
   if (a)
   {
-      int16_t shift2 = 7;
+      shift2 = 7;
       shift3 = 1<<(6-shift);
 
   }
   else
   {
-    int16_t shift2 = -shift + 7;
+    shift2 = -shift + 7;
     shift3 = 1<<(6);
   }
 
