@@ -4,7 +4,10 @@
 #include "tensorflow/lite/kernels/internal/types.h"
 #include "tensorflow/lite/kernels/internal/common.h"
 #include "vector_operations.h"
+
 #include <iostream>
+#include <stdio.h>
+
 namespace tflite {
 
  void Conv(const ConvParams& params, const RuntimeShape& input_shape,
@@ -23,7 +26,7 @@ namespace tflite {
   const int pad_width = params.padding_values.width;
   const int pad_height = params.padding_values.height;
   const int32_t input_offset = params.input_offset;
-  const int32_t filter_offset = params.weights_offset;  std::cout<<" input_offset="<<input_offset<<"  filter_offset="<<filter_offset<<"    ";
+  const int32_t filter_offset = params.weights_offset;  std::cout<<" input_offset="<<input_offset<<"  filter_offset="<<filter_offset<<"    "<<std::endl;
   const int32_t output_offset = params.output_offset;
   const int32_t output_multiplier = params.output_multiplier;
   const int output_shift = params.output_shift;
@@ -46,77 +49,76 @@ namespace tflite {
   const int filter_width = filter_shape.Dims(2);
   const int output_height = output_shape.Dims(1);
   const int output_width = output_shape.Dims(2);
+
+  const uint32_t vect_data_stride=dilation_width_factor*input_depth;
+  const uint32_t vect_filter_stride=input_depth;
+
   for (int batch = 0; batch < batches; ++batch) {
     for (int out_y = 0; out_y < output_height; ++out_y) {
       const int in_y_origin = (out_y * stride_height) - pad_height;
       for (int out_x = 0; out_x < output_width; ++out_x) {
         const int in_x_origin = (out_x * stride_width) - pad_width;
         for (int out_channel = 0; out_channel < output_depth; ++out_channel) {
-          
-		  int32_t acc = 0, tempAcc;
+          int32_t acc = 0, tempAcc;
           for (int filter_y = 0; filter_y < filter_height; ++filter_y) {
             const int in_y = in_y_origin + dilation_height_factor * filter_y;
-           // for (int filter_x = 0; filter_x < filter_width; ++filter_x) {
-			const int filter_x=0;  
-            int in_x = in_x_origin;// + dilation_width_factor * filter_x;
+            int filter_x=0;  
+            int in_x = in_x_origin;
 
             // Zero padding by omitting the rows outside the image.
             const bool is_point_inside_image = (in_y >= 0) && (in_y < input_height);
             if (!is_point_inside_image){continue;}
 			
-			// Zero padding by reducing filter size if filter extends outside the image.
-			uint32_t vecN=filter_width, filter_x_position=filter_x;
-			if(in_x<0){
-				vecN+=in_x;
-				filter_x_position=(uint32_t)-filter_x_position;
-				in_x=0;
-			}else if(in_x+filter_width>=input_width){
-				vecN=filter_width-(in_x-input_width);
-			}
+			      // Zero padding by reducing filter size if filter extends outside the image.
+			    uint32_t vecN=filter_width, filter_x_position=filter_x;
+			      if(in_x<0){
+				      vecN+=in_x;
+				      filter_x_position=-in_x;
+				      in_x=0;
+			      }else if(in_x+filter_width>=input_width){
+				      vecN+=(in_x-input_width);
+			      }
 			
-			for (int in_channel = 0; in_channel < input_depth; ++in_channel) {
-				const uint8_t* input_val = &input_data[Offset(input_shape, batch, in_y, in_x, in_channel)];
-                const uint8_t* filter_val = &filter_data[Offset(filter_shape, out_channel, filter_y, filter_x, in_channel)];
-                //acc +=(filter_val + filter_offset) * (input_val + input_offset);
-				vectu_dotProduct_offset_stride_vec2(filter_width, input_val, filter_val, &tempAcc, static_cast<int8_t>(filter_offset), static_cast<int8_t>(input_offset), dilation_width_factor);
-				acc +=tempAcc;
-				
-				//std::cout<<batches<<"	"<<output_height<<"	"<<output_width<<"	"<<input_depth<<"	"<<filter_height<<"	"<< filter_width<<"\n";
-				const uint8_t* input_a = input_data;
-                const uint8_t* filter_a = filter_data;
-                
-				std::cout<<"pointers: "<<input_a[Offset(input_shape, batch, in_y, in_x, in_channel)]<<"	"<<filter_a[0]<<std::endl;
-				int32_t input_vals = input_data[Offset(input_shape, batch, in_y,in_x, in_channel)];
-                int32_t filter_vals = filter_data[Offset(filter_shape, out_channel, filter_y, filter_x, in_channel)];
-                int32_t temp=(filter_vals + filter_offset) * (input_vals + input_offset);
-				std::cout<<"vals: "<<input_vals<<"	"<<filter_vals<<std::endl;
-				std::cout<<"output: "<<temp<<"	"<<tempAcc<<std::endl;
-				std::cout<<"offset: "<<Offset(input_shape, batch, in_y, in_x, in_channel)<<std::endl;
-			}
-            //}
+			      for (int in_channel = 0; in_channel < input_depth; ++in_channel) {
+				      const uint8_t* input_val = &input_data[Offset(input_shape, batch, in_y, in_x, in_channel)];
+              const uint8_t* filter_val = &filter_data[Offset(filter_shape, out_channel, filter_y, filter_x, in_channel)];
+              vectu_dotProduct_offset_stride(filter_width, input_val, filter_val, &tempAcc, filter_offset, input_offset, vect_data_stride,vect_filter_stride);
+				      acc +=tempAcc;
+              std::cout<<"vecN="<<vecN<<"  filter_width="<<filter_width<<"   vect_stride="<<vect_data_stride<<" filter_x_position="<<filter_x_position<<"  input_depth="<<input_depth<<std::endl;
+
+              int32_t testAcc=0;
+              for ( filter_x = 0; filter_x < filter_width; ++filter_x) {
+                 in_x = in_x_origin + dilation_width_factor * filter_x;
+                const uint8_t input_val_temp = input_data[Offset(input_shape, batch, in_y, in_x, in_channel)];
+                const uint8_t filter_val_temp = filter_data[Offset(filter_shape, out_channel, filter_y, filter_x, in_channel)];
+                testAcc+=(filter_val_temp + filter_offset) * (input_val_temp + input_offset);
+                std::cout<<"input_val: "<<unsigned(input_val_temp)<<"  ==  "<< unsigned(input_val[vect_data_stride*filter_x])<<std::endl;
+              }
+
+				    
+				      std::cout<<"output: "<<testAcc<<"	"<<tempAcc<<std::endl<<std::endl;
+				      //std::cout<<"offset: "<<Offset(input_shape, batch, in_y, in_x, in_channel)<<std::endl<<std::endl;
+			      }
           }
           if (bias_data) {
             acc += bias_data[out_channel];
           }
-          acc = MultiplyByQuantizedMultiplier(acc, output_multiplier,
-                                              output_shift);
+          acc = MultiplyByQuantizedMultiplier(acc, output_multiplier, output_shift);
           acc += output_offset;
           acc = std::max(acc, output_activation_min);
           acc = std::min(acc, output_activation_max);
-          output_data[Offset(output_shape, batch, out_y, out_x, out_channel)] =
-              static_cast<uint8_t>(acc);
+          output_data[Offset(output_shape, batch, out_y, out_x, out_channel)] = static_cast<uint8_t>(acc);
         }
       }
-	  
-    }
+	  }
   }
   
-  const uint8_t* input_val = input_data;
-  const uint8_t* input_valtest =  static_cast<const uint8_t*>(input_data);
-  
-  
+ /* const uint8_t* input_val = input_data;
+  const uint8_t* input_valtest =  (input_data);
+   
   for(unsigned int i=0;i<2*4*6*1;i++){
-	 std::cout<< static_cast<int32_t>(input_data[i])<<"		"<< static_cast<int32_t>(input_val[i]) <<"   |"<<input_valtest[i]<<"|"<<std::endl;
+	 std::cout<< static_cast<int32_t>(input_data[i])<<"		"<< static_cast<int32_t>(input_val[i]) <<"   |"<<unsigned(input_valtest[i])<<"|"<<std::endl;
+   printf("%u \n",input_valtest[i]);
 	 
   }
   std::cout<<batches<<"	"<<input_height<<"	"<<input_width<<"	"<<input_depth<<"\n";
@@ -132,9 +134,13 @@ namespace tflite {
 			std::cout<<"tensor "<<Offset(input_shape, batch, out_y, out_x, in_channel)<<"	"<<static_cast<int32_t>(input_data[Offset(input_shape, batch, out_y, out_x, in_channel)])<<std::endl;
 		
 		}
+    std::cout<<"width^"<<std::endl<<std::endl;
 	  }
+    std::cout<<"height^"<<std::endl<<std::endl;
 	}
-  }
+  std::cout<<"batches^"<<std::endl<<std::endl;
+  }*/
+
 }
 
 
