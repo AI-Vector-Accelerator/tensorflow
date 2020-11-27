@@ -5,9 +5,6 @@
 #include "tensorflow/lite/kernels/internal/common.h"
 #include "vector_operations.h"
 
-#include <iostream>
-#include <stdio.h>
-
 namespace tflite {
 
  void Conv(const ConvParams& params, const RuntimeShape& input_shape,
@@ -26,7 +23,7 @@ namespace tflite {
   const int pad_width = params.padding_values.width;
   const int pad_height = params.padding_values.height;
   const int32_t input_offset = params.input_offset;
-  const int32_t filter_offset = params.weights_offset;  std::cout<<" input_offset="<<input_offset<<"  filter_offset="<<filter_offset<<"    "<<std::endl;
+  const int32_t filter_offset = params.weights_offset;  
   const int32_t output_offset = params.output_offset;
   const int32_t output_multiplier = params.output_multiplier;
   const int output_shift = params.output_shift;
@@ -70,7 +67,7 @@ namespace tflite {
             if (!is_point_inside_image){continue;}
 			
 			      // Zero padding by reducing filter size if filter extends outside the image.
-			    uint32_t vecN=filter_width, filter_x_position=filter_x;
+			      uint32_t vecN=filter_width, filter_x_position=filter_x;
 			      if(in_x<0){
 				      vecN+=in_x;
 				      filter_x_position=-in_x;
@@ -81,24 +78,10 @@ namespace tflite {
 			
 			      for (int in_channel = 0; in_channel < input_depth; ++in_channel) {
 				      const uint8_t* input_val = &input_data[Offset(input_shape, batch, in_y, in_x, in_channel)];
-              const uint8_t* filter_val = &filter_data[Offset(filter_shape, out_channel, filter_y, filter_x, in_channel)];
+              const uint8_t* filter_val = &filter_data[Offset(filter_shape, out_channel, filter_y, filter_x_position, in_channel)];
               vectu_dotProduct_offset_stride(filter_width, input_val, filter_val, &tempAcc, filter_offset, input_offset, vect_data_stride,vect_filter_stride);
 				      acc +=tempAcc;
-              std::cout<<"vecN="<<vecN<<"  filter_width="<<filter_width<<"   vect_stride="<<vect_data_stride<<" filter_x_position="<<filter_x_position<<"  input_depth="<<input_depth<<std::endl;
-
-              int32_t testAcc=0;
-              for ( filter_x = 0; filter_x < filter_width; ++filter_x) {
-                 in_x = in_x_origin + dilation_width_factor * filter_x;
-                const uint8_t input_val_temp = input_data[Offset(input_shape, batch, in_y, in_x, in_channel)];
-                const uint8_t filter_val_temp = filter_data[Offset(filter_shape, out_channel, filter_y, filter_x, in_channel)];
-                testAcc+=(filter_val_temp + filter_offset) * (input_val_temp + input_offset);
-                std::cout<<"input_val: "<<unsigned(input_val_temp)<<"  ==  "<< unsigned(input_val[vect_data_stride*filter_x])<<std::endl;
-              }
-
-				    
-				      std::cout<<"output: "<<testAcc<<"	"<<tempAcc<<std::endl<<std::endl;
-				      //std::cout<<"offset: "<<Offset(input_shape, batch, in_y, in_x, in_channel)<<std::endl<<std::endl;
-			      }
+            }
           }
           if (bias_data) {
             acc += bias_data[out_channel];
@@ -112,35 +95,6 @@ namespace tflite {
       }
 	  }
   }
-  
- /* const uint8_t* input_val = input_data;
-  const uint8_t* input_valtest =  (input_data);
-   
-  for(unsigned int i=0;i<2*4*6*1;i++){
-	 std::cout<< static_cast<int32_t>(input_data[i])<<"		"<< static_cast<int32_t>(input_val[i]) <<"   |"<<unsigned(input_valtest[i])<<"|"<<std::endl;
-   printf("%u \n",input_valtest[i]);
-	 
-  }
-  std::cout<<batches<<"	"<<input_height<<"	"<<input_width<<"	"<<input_depth<<"\n";
-				
-  for (int batch = 0; batch < batches; ++batch) {
-	  
-    for (int out_y = 0; out_y < input_height; ++out_y) {
-     
-      for (int out_x = 0; out_x < input_width; ++out_x) {
-      
-       		
-		for (int in_channel = 0; in_channel < input_depth; ++in_channel) {
-			std::cout<<"tensor "<<Offset(input_shape, batch, out_y, out_x, in_channel)<<"	"<<static_cast<int32_t>(input_data[Offset(input_shape, batch, out_y, out_x, in_channel)])<<std::endl;
-		
-		}
-    std::cout<<"width^"<<std::endl<<std::endl;
-	  }
-    std::cout<<"height^"<<std::endl<<std::endl;
-	}
-  std::cout<<"batches^"<<std::endl<<std::endl;
-  }*/
-
 }
 
 
