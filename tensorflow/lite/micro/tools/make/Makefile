@@ -464,7 +464,7 @@ THIRD_PARTY_TARGETS :=
 $(foreach DOWNLOAD,$(THIRD_PARTY_DOWNLOADS),$(eval $(call create_download_rule,$(DOWNLOAD))))
 third_party_downloads: $(THIRD_PARTY_TARGETS)
 
-MICROLITE_LIB_OBJS := $(addprefix $(OBJDIR), \
+MICROLITE_LIB_OBJS += $(addprefix $(OBJDIR), \
 $(patsubst %.cc,%.o,$(patsubst %.c,%.o,$(MICROLITE_CC_SRCS))))
 
 MICROLITE_LIB_OBJS += $(addprefix $(OBJDIR), \
