@@ -87,6 +87,13 @@ ifeq ($(TARGET), mcu_riscv)
       LDFLAGS += \
         $(MAKEFILE_DIR)/targets/cv32e40p/vector_operations.o \
         $(MAKEFILE_DIR)/targets/cv32e40p/vector_operations_assembly.o 
+
+      MICROLITE_LIB_OBJS += \
+        $(MAKEFILE_DIR)/targets/cv32e40p/vector_operations.o \
+        $(MAKEFILE_DIR)/targets/cv32e40p/vector_operations_assembly.o 
+
+        $(info $$MICROLITE_LIB_OBJS is [${MICROLITE_LIB_OBJS}])
+      
     endif
 
   else

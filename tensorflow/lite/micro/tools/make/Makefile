@@ -228,7 +228,9 @@ MICROLITE_LIB_NAME := libtensorflow-microlite.a
 MICRO_LITE_BENCHMARKS := $(wildcard tensorflow/lite/micro/benchmarks/Makefile.inc)
 
 MICROLITE_TEST_SRCS := \
-$(wildcard tensorflow/lite/micro/kernels/conv_test.cc) \
+$(wildcard tensorflow/lite/micro/kernels/cv32e40p-ml/depthwise_conv_test.cc) \
+$(wildcard tensorflow/lite/micro/kernels/cv32e40p-ml/conv_test.cc) \
+
 #$(wildcard tensorflow/lite/micro/*test.cc) \
 $(wildcard tensorflow/lite/micro/kernels/*test.cc) \
 #$(wildcard tensorflow/lite/micro/memory_planner/*test.cc)
@@ -462,7 +464,7 @@ THIRD_PARTY_TARGETS :=
 $(foreach DOWNLOAD,$(THIRD_PARTY_DOWNLOADS),$(eval $(call create_download_rule,$(DOWNLOAD))))
 third_party_downloads: $(THIRD_PARTY_TARGETS)
 
-MICROLITE_LIB_OBJS := $(addprefix $(OBJDIR), \
+MICROLITE_LIB_OBJS += $(addprefix $(OBJDIR), \
 $(patsubst %.cc,%.o,$(patsubst %.c,%.o,$(MICROLITE_CC_SRCS))))
 
 MICROLITE_LIB_OBJS += $(addprefix $(OBJDIR), \
