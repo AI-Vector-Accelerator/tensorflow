@@ -147,7 +147,7 @@ inline void ConvPointwise(const ConvParams& params, const RuntimeShape& input_sh
 				      filter_x=-in_x;
 				      in_x=0;
 			      }else if(in_x+filter_width>input_width){
-				      vecN+=(in_x-input_width);
+				      vecN=input_width-in_x;
 			      }
 		
 			      for (int in_channel = 0; in_channel < input_depth; ++in_channel) {
@@ -317,7 +317,7 @@ inline void ConvPerChannel(
 				      filter_x=-in_x;
 				      in_x=0;
 			      }else if(in_x+filter_width>input_width){
-				      vecN+=(in_x-input_width);
+				      vecN=input_width-in_x;
 			      }
 
             for (int in_channel = 0; in_channel < input_depth; ++in_channel) {

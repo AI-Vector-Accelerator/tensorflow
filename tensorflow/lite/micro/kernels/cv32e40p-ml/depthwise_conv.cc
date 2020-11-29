@@ -13,7 +13,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ==============================================================================*/
 
-#include "tensorflow/lite/kernels/internal/reference/integer_ops/depthwise_conv.h"
+#include "tensorflow/lite/kernels/internal/reference/integer_ops/depthwise_conv.h" 
 
 #include "tensorflow/lite/c/builtin_op_data.h"
 #include "tensorflow/lite/c/common.h"
@@ -21,10 +21,12 @@ limitations under the License.
 #include "tensorflow/lite/kernels/internal/quantization_util.h"
 #include "tensorflow/lite/kernels/internal/reference/depthwiseconv_float.h"
 #include "tensorflow/lite/kernels/internal/reference/depthwiseconv_uint8.h"
-#include "tensorflow/lite/kernels/internal/tensor_ctypes.h"
+#include "tensorflow/lite/kernels/internal/tensor_ctypes.h"   
 #include "tensorflow/lite/kernels/kernel_util.h"
 #include "tensorflow/lite/kernels/padding.h"
 #include "tensorflow/lite/micro/kernels/kernel_util.h"
+ 
+#include "depthwise_vectorized_conv.h"
 
 namespace tflite {
 namespace {
@@ -219,7 +221,7 @@ void EvalQuantizedPerChannel(TfLiteContext* context, TfLiteNode* node,
   op_params.quantized_activation_min = std::numeric_limits<int8_t>::min();
   op_params.quantized_activation_max = std::numeric_limits<int8_t>::max();
 
-  reference_integer_ops::DepthwiseConvPerChannel(
+  DepthwiseConvPerChannel(
       op_params, data.per_channel_output_multiplier,
       data.per_channel_output_shift, tflite::micro::GetTensorShape(input),
       tflite::micro::GetTensorData<int8_t>(input),
@@ -259,7 +261,7 @@ void EvalQuantized(TfLiteContext* context, TfLiteNode* node,
   // Legacy ops used mixed left and right shifts. Now all are +ve-means-left.
   op_params.output_shift = -data.output_shift;
 
-  tflite::reference_ops::DepthwiseConv(
+  tflite::DepthwiseConv(
       op_params, tflite::micro::GetTensorShape(input),
       tflite::micro::GetTensorData<uint8_t>(input),
       tflite::micro::GetTensorShape(filter),

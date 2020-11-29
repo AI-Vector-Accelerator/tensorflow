@@ -20,6 +20,10 @@ limitations under the License.
 #include "tensorflow/lite/micro/test_helpers.h"
 #include "tensorflow/lite/micro/testing/micro_test.h"
 
+#include "cycles_riscv.h"
+#include <iostream>
+
+
 namespace tflite {
 namespace testing {
 namespace {
@@ -63,12 +67,22 @@ TfLiteStatus ValidateDepthwiseConvGoldens(
 
   const char* init_data = reinterpret_cast<const char*>(conv_params);
 
+  unsigned long startCycles, endCycles, cyclesToRun;
+
   // TODO(b/154240825): Use a test macro here which fails and returns.
   TfLiteStatus status = runner.InitAndPrepare(init_data);
   if (status != kTfLiteOk) {
     return status;
   }
+
+  
+  startCycles=getCycles();
   TF_LITE_MICRO_EXPECT_EQ(kTfLiteOk, runner.Invoke());
+  endCycles=getCycles();
+  cyclesToRun=endCycles-startCycles;
+  std::cout<<"	Depthwise Convolution finished, cyclesToRun = "<<cyclesToRun<<std::endl;
+
+
 
   const T* output_data = tflite::GetTensorData<T>(&tensors[kOutputTensorIndex]);
   for (int i = 0; i < output_length; ++i) {
