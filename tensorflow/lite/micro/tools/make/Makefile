@@ -229,6 +229,8 @@ MICRO_LITE_BENCHMARKS := $(wildcard tensorflow/lite/micro/benchmarks/Makefile.in
 
 MICROLITE_TEST_SRCS := \
 $(wildcard tensorflow/lite/micro/kernels/activations_test.cc) \
+$(wildcard tensorflow/lite/micro/kernels/conv_test.cc) \
+$(wildcard tensorflow/lite/micro/kernels/depthwise_conv_test.cc) \
 #$(wildcard tensorflow/lite/micro/*test.cc) \
 $(wildcard tensorflow/lite/micro/kernels/*test.cc) \
 #$(wildcard tensorflow/lite/micro/memory_planner/*test.cc)
