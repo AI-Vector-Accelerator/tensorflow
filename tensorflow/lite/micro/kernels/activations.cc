@@ -23,7 +23,7 @@ limitations under the License.
 #include "tensorflow/lite/kernels/op_macros.h"
 #include "tensorflow/lite/micro/kernels/kernel_util.h"
 #include "tensorflow/lite/micro/micro_utils.h"
-
+#include <iostream>
 namespace tflite {
 namespace ops {
 namespace micro {
@@ -51,6 +51,7 @@ inline void ReluQuantized(const ReluOpData& data,
                           const RuntimeShape& input_shape,
                           const RuntimeShape& output_shape, const T* input_data,
                           T* output_data) {
+                            std::cout<<"relu quantized base\n";
   const int flat_size = MatchingFlatSize(input_shape, output_shape);
   for (int i = 0; i < flat_size; ++i) {
     const int32_t val = static_cast<int32_t>(input_data[i]);
@@ -121,6 +122,7 @@ template <typename Q>
 inline void Relu6Quantized(Q lower, Q upper, const RuntimeShape& input_shape,
                            const Q* input_data,
                            const RuntimeShape& output_shape, Q* output_data) {
+                             std::cout<<"relu6quatizied  base\n";
   const int flat_size = MatchingFlatSize(input_shape, output_shape);
   for (int i = 0; i < flat_size; ++i) {
     const Q val = input_data[i];
