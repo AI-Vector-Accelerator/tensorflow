@@ -24,7 +24,7 @@ limitations under the License.
 #include "tensorflow/lite/kernels/op_macros.h"
 #include "tensorflow/lite/micro/kernels/kernel_util.h"
 #include "tensorflow/lite/micro/micro_utils.h"
-
+#include <iostream>
 #include "vector_operations.h"
 
 
@@ -126,6 +126,7 @@ inline void Relu6Quantized(uint8_t lower, uint8_t upper, const RuntimeShape& inp
                            const RuntimeShape& output_shape, uint8_t* output_data) {
 
   const unsigned int flat_size = MatchingFlatSize(input_shape, output_shape);
+  std::cout<<"relu\n";
   vect_ReLu6_Bound_unsigned(flat_size, input_data, output_data,lower,upper); 
 
 }
@@ -136,6 +137,7 @@ inline void Relu6Quantized(int8_t lower, int8_t upper, const RuntimeShape& input
                            const RuntimeShape& output_shape, int8_t* output_data) {
 
   const unsigned int flat_size = MatchingFlatSize(input_shape, output_shape);
+  std::cout<<"urelu\n";
   vect_ReLu6_Bound(flat_size, input_data, output_data,lower,upper);
 }
 
