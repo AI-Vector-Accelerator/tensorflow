@@ -228,9 +228,13 @@ MICROLITE_LIB_NAME := libtensorflow-microlite.a
 MICRO_LITE_BENCHMARKS := $(wildcard tensorflow/lite/micro/benchmarks/Makefile.inc)
 
 MICROLITE_TEST_SRCS := \
+<<<<<<< HEAD
 $(wildcard tensorflow/lite/micro/kernels/cv32e40p-ml/depthwise_conv_test.cc) \
 $(wildcard tensorflow/lite/micro/kernels/cv32e40p-ml/conv_test.cc) \
 
+=======
+$(wildcard tensorflow/lite/micro/kernels/activations_test.cc) \
+>>>>>>> cv32e40p-ml-port-john
 #$(wildcard tensorflow/lite/micro/*test.cc) \
 $(wildcard tensorflow/lite/micro/kernels/*test.cc) \
 #$(wildcard tensorflow/lite/micro/memory_planner/*test.cc)
