@@ -22,7 +22,7 @@ limitations under the License.
 #include "tensorflow/lite/kernels/internal/tensor_ctypes.h"
 #include "tensorflow/lite/kernels/kernel_util.h"
 #include "tensorflow/lite/micro/kernels/kernel_util.h"
-
+#include <iostream>
 namespace tflite {
 namespace ops {
 namespace micro {
@@ -108,7 +108,7 @@ TfLiteStatus PreluEval(TfLiteContext* context, TfLiteNode* node) {
   TFLITE_DCHECK(node->user_data != nullptr);
   const PreluParams& params =
       *(static_cast<const PreluParams*>(node->user_data));
-
+std::cout<<"PreluEval\n";
   const TfLiteEvalTensor* input = tflite::micro::GetEvalInput(context, node, 0);
   const TfLiteEvalTensor* alpha = tflite::micro::GetEvalInput(context, node, 1);
   TfLiteEvalTensor* output = tflite::micro::GetEvalOutput(context, node, 0);
