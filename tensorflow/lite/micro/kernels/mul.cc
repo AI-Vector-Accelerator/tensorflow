@@ -13,6 +13,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ==============================================================================*/
 
+#include <iostream>
+
 #include "tensorflow/lite/kernels/internal/reference/mul.h"
 
 #include "tensorflow/lite/c/common.h"
@@ -90,6 +92,9 @@ TfLiteStatus CalculateOpData(TfLiteContext* context, TfLiteNode* node,
 void EvalQuantized(TfLiteContext* context, TfLiteNode* node, const OpData* data,
                    const TfLiteEvalTensor* input1,
                    const TfLiteEvalTensor* input2, TfLiteEvalTensor* output) {
+
+  std::cout << "mul-" << "EvalQuantized" << std::endl;
+
   tflite::ArithmeticParams op_params = {};
   op_params.quantized_activation_min = data->output_activation_min;
   op_params.quantized_activation_max = data->output_activation_max;
@@ -147,6 +152,8 @@ void EvalFloat(TfLiteContext* context, TfLiteNode* node,
                TfLiteMulParams* params, const OpData* data,
                const TfLiteEvalTensor* input1, const TfLiteEvalTensor* input2,
                TfLiteEvalTensor* output) {
+                 
+  std::cout << "mul-" << "EvalFloat" << std::endl;
   tflite::ArithmeticParams op_params = {};
   op_params.float_activation_min = data->output_activation_min_f32;
   op_params.float_activation_max = data->output_activation_max_f32;
@@ -174,11 +181,15 @@ void EvalFloat(TfLiteContext* context, TfLiteNode* node,
 }
 
 void* Init(TfLiteContext* context, const char* buffer, size_t length) {
+  
+  std::cout << "mul-" << "Init" << std::endl;
   TFLITE_DCHECK(context->AllocatePersistentBuffer != nullptr);
   return context->AllocatePersistentBuffer(context, sizeof(OpData));
 }
 
 TfLiteStatus Prepare(TfLiteContext* context, TfLiteNode* node) {
+  
+  std::cout << "mul-" << "Prepare" << std::endl;
   TFLITE_DCHECK(node->builtin_data != nullptr);
   auto* params = reinterpret_cast<TfLiteMulParams*>(node->builtin_data);
 
@@ -189,6 +200,8 @@ TfLiteStatus Prepare(TfLiteContext* context, TfLiteNode* node) {
 }
 
 TfLiteStatus Eval(TfLiteContext* context, TfLiteNode* node) {
+  
+  std::cout << "mul-" << "Eval" << std::endl;
   TFLITE_DCHECK(node->builtin_data != nullptr);
   auto* params = reinterpret_cast<TfLiteMulParams*>(node->builtin_data);
 

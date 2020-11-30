@@ -12,6 +12,8 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ==============================================================================*/
+#include <iostream>
+
 #include "tensorflow/lite/kernels/internal/reference/pooling.h"
 
 #include "tensorflow/lite/c/builtin_op_data.h"
@@ -43,6 +45,8 @@ TfLiteStatus CalculateOpData(const TfLiteContext* context,
                              const TfLitePoolParams* params,
                              const TfLiteTensor* input,
                              const TfLiteTensor* output, OpData* data) {
+                               
+  std::cout << "pooling-" << "CalculateOpData" << std::endl;   
   // input: batch, height, width, channel
   int height = SizeOfDimension(input, 1);
   int width = SizeOfDimension(input, 2);
@@ -61,6 +65,8 @@ TfLiteStatus CalculateOpData(const TfLiteContext* context,
 void AverageEvalFloat(const TfLiteContext* context, const TfLiteNode* node,
                       const TfLitePoolParams* params, const OpData* data,
                       const TfLiteEvalTensor* input, TfLiteEvalTensor* output) {
+                        
+  std::cout << "pooling-" << "AverageEvalFloat" << std::endl;   
   PoolParams op_params;
   op_params.stride_height = params->stride_height;
   op_params.stride_width = params->stride_width;
@@ -80,6 +86,8 @@ void AverageEvalQuantized(TfLiteContext* context, const TfLiteNode* node,
                           const TfLitePoolParams* params, const OpData* data,
                           const TfLiteEvalTensor* input,
                           TfLiteEvalTensor* output) {
+                            
+  std::cout << "pooling-" << "AverageEvalQuantized" << std::endl;   
   TFLITE_DCHECK(input->type == kTfLiteUInt8 || input->type == kTfLiteInt8);
 
   PoolParams op_params;
@@ -109,6 +117,8 @@ void AverageEvalQuantized(TfLiteContext* context, const TfLiteNode* node,
 void MaxEvalFloat(TfLiteContext* context, TfLiteNode* node,
                   TfLitePoolParams* params, const OpData* data,
                   const TfLiteEvalTensor* input, TfLiteEvalTensor* output) {
+                    
+  std::cout << "pooling-" << "MaxEvalFloat" << std::endl;   
   tflite::PoolParams op_params;
   op_params.stride_height = params->stride_height;
   op_params.stride_width = params->stride_width;
@@ -127,6 +137,8 @@ void MaxEvalFloat(TfLiteContext* context, TfLiteNode* node,
 void MaxEvalQuantized(TfLiteContext* context, TfLiteNode* node,
                       TfLitePoolParams* params, const OpData* data,
                       const TfLiteEvalTensor* input, TfLiteEvalTensor* output) {
+                        
+  std::cout << "pooling-" << "MaxEvalQuantized" << std::endl;   
   tflite::PoolParams op_params;
   op_params.stride_height = params->stride_height;
   op_params.stride_width = params->stride_width;
@@ -153,6 +165,8 @@ void MaxEvalQuantized(TfLiteContext* context, TfLiteNode* node,
 }  // namespace
 
 TfLiteStatus AverageEval(TfLiteContext* context, TfLiteNode* node) {
+  
+  std::cout << "pooling-" << "AverageEval" << std::endl;   
   TFLITE_DCHECK(node->builtin_data != nullptr);
   auto* params = reinterpret_cast<TfLitePoolParams*>(node->builtin_data);
 
@@ -182,6 +196,8 @@ TfLiteStatus AverageEval(TfLiteContext* context, TfLiteNode* node) {
 }
 
 TfLiteStatus MaxEval(TfLiteContext* context, TfLiteNode* node) {
+  
+  std::cout << "pooling-" << "MaxEval" << std::endl;   
   TFLITE_DCHECK(node->builtin_data != nullptr);
   auto* params = reinterpret_cast<TfLitePoolParams*>(node->builtin_data);
 
@@ -210,11 +226,15 @@ TfLiteStatus MaxEval(TfLiteContext* context, TfLiteNode* node) {
 }
 
 void* Init(TfLiteContext* context, const char* buffer, size_t length) {
+  
+  std::cout << "pooling-" << "Init" << std::endl;   
   TFLITE_DCHECK(context->AllocatePersistentBuffer != nullptr);
   return context->AllocatePersistentBuffer(context, sizeof(OpData));
 }
 
 TfLiteStatus Prepare(TfLiteContext* context, TfLiteNode* node) {
+  
+  std::cout << "pooling-" << "Prepare" << std::endl;   
   TFLITE_DCHECK(node->builtin_data != nullptr);
   auto* params = reinterpret_cast<TfLitePoolParams*>(node->builtin_data);
 

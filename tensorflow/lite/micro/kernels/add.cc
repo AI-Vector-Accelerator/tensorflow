@@ -13,6 +13,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ==============================================================================*/
 
+#include <iostream>
+
 #include "tensorflow/lite/kernels/internal/reference/add.h"
 
 #include "tensorflow/lite/c/builtin_op_data.h"
@@ -64,6 +66,9 @@ TfLiteStatus CalculateOpData(TfLiteContext* context, TfLiteAddParams* params,
                              const TfLiteTensor* input1,
                              const TfLiteTensor* input2, TfLiteTensor* output,
                              OpData* data) {
+  
+  std::cout << "add-" << "CalculateOpData" << std::endl;                             
+  
   data->requires_broadcast = !HaveSameShapes(input1, input2);
 
   if (output->type == kTfLiteUInt8 || output->type == kTfLiteInt8) {
@@ -107,6 +112,8 @@ TfLiteStatus CalculateOpData(TfLiteContext* context, TfLiteAddParams* params,
 void EvalAdd(TfLiteContext* context, TfLiteNode* node, TfLiteAddParams* params,
              const OpData* data, const TfLiteEvalTensor* input1,
              const TfLiteEvalTensor* input2, TfLiteEvalTensor* output) {
+               
+  std::cout << "add-" << "EvalAdd" << std::endl;   
   tflite::ArithmeticParams op_params;
   SetActivationParams(data->output_activation_min_f32,
                       data->output_activation_max_f32, &op_params);
@@ -133,6 +140,8 @@ TfLiteStatus EvalAddQuantized(TfLiteContext* context, TfLiteNode* node,
                               const TfLiteEvalTensor* input1,
                               const TfLiteEvalTensor* input2,
                               TfLiteEvalTensor* output) {
+                                
+  std::cout << "add-" << "EvalQuantized" << std::endl;   
   if (output->type == kTfLiteUInt8 || output->type == kTfLiteInt8) {
     tflite::ArithmeticParams op_params;
     op_params.left_shift = data->left_shift;
@@ -192,11 +201,15 @@ TfLiteStatus EvalAddQuantized(TfLiteContext* context, TfLiteNode* node,
 }
 
 void* Init(TfLiteContext* context, const char* buffer, size_t length) {
+  
+  std::cout << "add-" << "Init" << std::endl;   
   TFLITE_DCHECK(context->AllocatePersistentBuffer != nullptr);
   return context->AllocatePersistentBuffer(context, sizeof(OpData));
 }
 
 TfLiteStatus Prepare(TfLiteContext* context, TfLiteNode* node) {
+  
+  std::cout << "add-" << "Prepare" << std::endl;   
   TFLITE_DCHECK(node->user_data != nullptr);
   TFLITE_DCHECK(node->builtin_data != nullptr);
 
@@ -217,6 +230,8 @@ TfLiteStatus Prepare(TfLiteContext* context, TfLiteNode* node) {
 }
 
 TfLiteStatus Eval(TfLiteContext* context, TfLiteNode* node) {
+  
+  std::cout << "add-" << "Eval" << std::endl;   
   auto* params = reinterpret_cast<TfLiteAddParams*>(node->builtin_data);
 
   TFLITE_DCHECK(node->user_data != nullptr);
