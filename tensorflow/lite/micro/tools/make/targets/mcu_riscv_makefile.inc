@@ -84,16 +84,9 @@ ifeq ($(TARGET), mcu_riscv)
     endif
 
     ifneq (,$(findstring cv32e40p-ml, $(TAGS)))
-<<<<<<< HEAD
-
-=======
->>>>>>> cv32e40p-ml-port-john
       MICROLITE_LIB_OBJS += \
         $(MAKEFILE_DIR)/targets/cv32e40p/vector_operations.o \
         $(MAKEFILE_DIR)/targets/cv32e40p/vector_operations_assembly.o 
-
-        $(info $$MICROLITE_LIB_OBJS is [${MICROLITE_LIB_OBJS}])
-      
     endif
 
   else
