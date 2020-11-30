@@ -5,7 +5,7 @@
 #include "tensorflow/lite/kernels/internal/common.h"
 
 #include "vector_operations.h"
-
+#include <iostream>
 
 namespace tflite {
 
@@ -47,6 +47,7 @@ struct DepthwiseConvBasicKernel {
       const uint8_t* filter_data, const RuntimeShape& bias_shape,
       const int32_t* bias_data, const RuntimeShape& output_shape,
       uint8_t* output_data) {
+        std::cout<<"DepthwiseConvBasicKernel\n";
     const int stride_width = params.stride_width;
     const int stride_height = params.stride_height;
     const int dilation_width_factor = params.dilation_width_factor;
@@ -153,7 +154,7 @@ struct DepthwiseConvBasicKernel {
     const int32_t output_activation_max = params.quantized_activation_max;
     const int32_t* output_multiplier = params.output_multiplier_per_channel;
     const int32_t* output_shift = params.output_shift_per_channel;
-
+std::cout<<"RunPerChannel\n";
     // Check dimensions of the tensors.
     TFLITE_DCHECK_EQ(input_shape.DimensionsCount(), 4);
     TFLITE_DCHECK_EQ(filter_shape.DimensionsCount(), 4);
@@ -253,6 +254,7 @@ inline void DepthwiseConvPerChannel(
     const int8_t* filter_data, const RuntimeShape& bias_shape,
     const int32_t* bias_data, const RuntimeShape& output_shape,
     int8_t* output_data) {
+      std::cout<<"DepthwiseConvPerChannel\n";
   // Get parameters.
   // TODO(b/141565753): Re-introduce ScopedProfilingLabel on Micro.
   const int stride_width = params.stride_width;
