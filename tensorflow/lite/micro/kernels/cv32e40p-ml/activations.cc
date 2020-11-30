@@ -63,6 +63,7 @@ inline void ReluQuantized(const ReluOpData& data,
         MultiplyByQuantizedMultiplier(val - data.params.input_offset,
                                       data.params.output_multiplier,
                                       data.params.output_shift);
+                                       std::cout<<"relu quatizied\n";
     clamped = std::max(data.params.quantized_activation_min, clamped);
     clamped = std::min(data.params.quantized_activation_max, clamped);
     output_data[i] = static_cast<T>(clamped);
