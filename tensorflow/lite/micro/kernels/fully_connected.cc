@@ -12,6 +12,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ==============================================================================*/
+#include <iostream>
 
 #include "tensorflow/lite/micro/kernels/fully_connected.h"
 
@@ -56,6 +57,9 @@ TfLiteStatus CalculateOpData(TfLiteContext* context,
                              const TfLiteTensor* filter,
                              const TfLiteTensor* bias, TfLiteTensor* output,
                              OpData* data) {
+
+  
+  std::cout << "fully_connected-" << "CalculateOpData" << std::endl;  
   TfLiteStatus status = kTfLiteOk;
   if (data_type != kTfLiteFloat32) {
     double real_multiplier = 0.0;
@@ -76,11 +80,13 @@ TfLiteStatus CalculateOpData(TfLiteContext* context,
 }
 
 void* Init(TfLiteContext* context, const char* buffer, size_t length) {
+  std::cout << "fully_connected-" << "Init" << std::endl;  
   TFLITE_DCHECK(context->AllocatePersistentBuffer != nullptr);
   return context->AllocatePersistentBuffer(context, sizeof(OpData));
 }
 
 TfLiteStatus Prepare(TfLiteContext* context, TfLiteNode* node) {
+  std::cout << "fully_connected-" << "Prepare" << std::endl;  
   TFLITE_DCHECK(node->user_data != nullptr);
   TFLITE_DCHECK(node->builtin_data != nullptr);
 
@@ -110,6 +116,8 @@ TfLiteStatus EvalQuantizedInt8(TfLiteContext* context, TfLiteNode* node,
                                const TfLiteEvalTensor* filter,
                                const TfLiteEvalTensor* bias,
                                TfLiteEvalTensor* output) {
+                                 
+  std::cout << "fully_connected-" << "EvalQuantizedInt8" << std::endl;  
   tflite::FullyConnectedParams op_params;
   op_params.input_offset = -data.input_zero_point;
   op_params.weights_offset = -data.filter_zero_point;
@@ -137,6 +145,8 @@ TfLiteStatus EvalQuantized(TfLiteContext* context, TfLiteNode* node,
                            const TfLiteEvalTensor* filter,
                            const TfLiteEvalTensor* bias,
                            TfLiteEvalTensor* output) {
+                             
+  std::cout << "fully_connected-" << "EvalQuantized" << std::endl;  
   const int32_t input_offset = -data.input_zero_point;
   const int32_t filter_offset = -data.filter_zero_point;
   const int32_t output_offset = data.output_zero_point;
@@ -182,6 +192,8 @@ TfLiteStatus EvalFloat(TfLiteContext* context, TfLiteNode* node,
                        const TfLiteEvalTensor* input,
                        const TfLiteEvalTensor* filter,
                        const TfLiteEvalTensor* bias, TfLiteEvalTensor* output) {
+                         
+  std::cout << "fully_connected-" << "EvalFLoat" << std::endl;  
   float output_activation_min, output_activation_max;
   CalculateActivationRange(activation, &output_activation_min,
                            &output_activation_max);
@@ -201,6 +213,8 @@ TfLiteStatus EvalFloat(TfLiteContext* context, TfLiteNode* node,
 }
 
 TfLiteStatus Eval(TfLiteContext* context, TfLiteNode* node) {
+  
+  std::cout << "fully_connected-" << "Eval" << std::endl;  
   TFLITE_DCHECK(node->builtin_data != nullptr);
   const auto* params =
       static_cast<const TfLiteFullyConnectedParams*>(node->builtin_data);
