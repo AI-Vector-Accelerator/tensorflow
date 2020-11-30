@@ -17,7 +17,7 @@ limitations under the License.
 
 #include <algorithm>
 #include <limits>
-
+#include <iostream>
 #include "tensorflow/lite/kernels/internal/common.h"
 #include "tensorflow/lite/kernels/internal/compatibility.h"
 #include "tensorflow/lite/kernels/internal/cppmath.h"
@@ -38,7 +38,7 @@ inline void AffineQuantize(const tflite::QuantizationParams& op_params,
   const int flat_size = MatchingFlatSize(input_shape, output_shape);
   static constexpr int32_t min_val = std::numeric_limits<OutputT>::min();
   static constexpr int32_t max_val = std::numeric_limits<OutputT>::max();
-
+std::cout<<" AffineQuantize\n";
   for (int i = 0; i < flat_size; i++) {
     const InputT val = input_data[i];
     int32_t unclamped =
