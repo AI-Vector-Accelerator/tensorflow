@@ -26,7 +26,7 @@ limitations under the License.
 #include "tensorflow/lite/kernels/padding.h"
 #include "tensorflow/lite/micro/kernels/kernel_util.h"
  
-#include "depthwise_vectorized_conv.h"
+#include "vectorized_depthwise_conv.h"
 
 namespace tflite {
 namespace {

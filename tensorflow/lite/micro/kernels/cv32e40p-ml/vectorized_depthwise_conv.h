@@ -1,5 +1,5 @@
-#ifndef DEPTHWISE_VECTORIZED_CONV_H_
-#define DEPTHWISE_VECTORIZED_CONV_H_
+#ifndef VECTORIZED_DEPTHWISE_CONV_H_
+#define VECTORIZED_DEPTHWISE_CONV_H_
 
 #include "tensorflow/lite/kernels/internal/types.h"
 #include "tensorflow/lite/kernels/internal/common.h"
