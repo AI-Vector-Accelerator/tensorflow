@@ -20,7 +20,7 @@ limitations under the License.
 #include "tensorflow/lite/kernels/kernel_util.h"
 #include "tensorflow/lite/kernels/padding.h"
 #include "tensorflow/lite/micro/kernels/kernel_util.h"
-
+#include <iostream>
 namespace tflite {
 namespace ops {
 namespace micro {
@@ -91,7 +91,7 @@ void AverageEvalQuantized(TfLiteContext* context, const TfLiteNode* node,
   op_params.padding_values.width = data->padding.width;
   op_params.quantized_activation_min = data->activation_min;
   op_params.quantized_activation_max = data->activation_max;
-
+std::cout<<"avergae pooling\n";
   if (input->type == kTfLiteUInt8) {
     reference_ops::AveragePool(op_params, tflite::micro::GetTensorShape(input),
                                tflite::micro::GetTensorData<uint8_t>(input),
@@ -136,7 +136,7 @@ void MaxEvalQuantized(TfLiteContext* context, TfLiteNode* node,
   op_params.padding_values.width = data->padding.width;
   op_params.quantized_activation_min = data->activation_min;
   op_params.quantized_activation_max = data->activation_max;
-
+std::cout<<"max pooling\n";
   if (input->type == kTfLiteUInt8) {
     reference_ops::MaxPool(op_params, tflite::micro::GetTensorShape(input),
                            tflite::micro::GetTensorData<uint8_t>(input),
