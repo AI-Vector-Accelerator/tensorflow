@@ -47,7 +47,7 @@ struct DepthwiseConvBasicKernel {
       const uint8_t* filter_data, const RuntimeShape& bias_shape,
       const int32_t* bias_data, const RuntimeShape& output_shape,
       uint8_t* output_data) {
-        std::cout<<"DepthwiseConvBasicKernel\n";
+        std::cout<<"u DepthwiseConvBasicKernel\n";
     const int stride_width = params.stride_width;
     const int stride_height = params.stride_height;
     const int dilation_width_factor = params.dilation_width_factor;

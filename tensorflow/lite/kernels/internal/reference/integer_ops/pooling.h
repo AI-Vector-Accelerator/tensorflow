@@ -15,6 +15,7 @@ limitations under the License.
 #ifndef TENSORFLOW_LITE_KERNELS_INTERNAL_REFERENCE_INTEGER_OPS_POOLING_H_
 #define TENSORFLOW_LITE_KERNELS_INTERNAL_REFERENCE_INTEGER_OPS_POOLING_H_
 
+#include <iostream>
 #include <limits>
 #include "tensorflow/lite/kernels/internal/common.h"
 
@@ -25,6 +26,7 @@ inline void AveragePool(const PoolParams& params,
                         const RuntimeShape& input_shape,
                         const int8_t* input_data,
                         const RuntimeShape& output_shape, int8_t* output_data) {
+                          std::cout<<"  average pool\n";
   TFLITE_DCHECK_LE(params.quantized_activation_min,
                    params.quantized_activation_max);
   TFLITE_DCHECK_EQ(input_shape.DimensionsCount(), 4);
@@ -82,6 +84,7 @@ inline void AveragePool(const PoolParams& params,
 inline void MaxPool(const PoolParams& params, const RuntimeShape& input_shape,
                     const int8_t* input_data, const RuntimeShape& output_shape,
                     int8_t* output_data) {
+                                        std::cout<<" max pool\n";
   TFLITE_DCHECK_LE(params.quantized_activation_min,
                    params.quantized_activation_max);
   TFLITE_DCHECK_GE(params.quantized_activation_min,

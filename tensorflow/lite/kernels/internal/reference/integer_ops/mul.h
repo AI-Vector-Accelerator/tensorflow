@@ -26,6 +26,7 @@ template <typename T>
 inline void MulElementwise(int size, const ArithmeticParams& params,
                            const T* input1_data, const T* input2_data,
                            T* output_data) {
+                                std::cout<<"MulElementwise\n";
   for (int i = 0; i < size; ++i) {
     const int32_t input1_val = params.input1_offset + input1_data[i];
     const int32_t input2_val = params.input2_offset + input2_data[i];

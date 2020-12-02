@@ -16,7 +16,7 @@ limitations under the License.
 #define TENSORFLOW_LITE_KERNELS_INTERNAL_REFERENCE_INTEGER_OPS_ADD_H_
 
 #include <limits>
-
+#include <iostream>
 #include "tensorflow/lite/kernels/internal/common.h"
 #include "tensorflow/lite/kernels/internal/types.h"
 
@@ -40,7 +40,7 @@ inline void AddElementwise(int size, const ArithmeticParams& params,
                            const int8_t* input1_data, const int8_t* input2_data,
                            int8_t* output_data) {
   CheckArithmeticParams(params);
-
+                  std::cout<<"AddElementwise\n";
   for (int i = 0; i < size; ++i) {
     const int32_t input1_val = params.input1_offset + input1_data[i];
     const int32_t input2_val = params.input2_offset + input2_data[i];
@@ -83,6 +83,7 @@ inline void BroadcastAdd4DSlow(const ArithmeticParams& params,
                                const int8_t* input2_data,
                                const RuntimeShape& output_shape,
                                int8_t* output_data) {
+                                   std::cout<<"BroadcastAdd4DSlow\n";
   NdArrayDesc<4> desc1;
   NdArrayDesc<4> desc2;
   NdArrayDescsForElementwiseBroadcast(input1_shape, input2_shape, &desc1,

@@ -16,7 +16,7 @@ limitations under the License.
 #define TENSORFLOW_LITE_KERNELS_INTERNAL_REFERENCE_INTEGER_OPS_FULLY_CONNECTED_H_
 
 #include "tensorflow/lite/kernels/internal/common.h"
-
+#include <iostream>
 namespace tflite {
 namespace reference_integer_ops {
 
@@ -25,7 +25,9 @@ inline void FullyConnected(
     const int8_t* input_data, const RuntimeShape& filter_shape,
     const int8_t* filter_data, const RuntimeShape& bias_shape,
     const int32_t* bias_data, const RuntimeShape& output_shape,
+                     
     int8_t* output_data) {
+       std::cout<<"fully connected\n";
   const int32_t input_offset = params.input_offset;
   const int32_t filter_offset = params.weights_offset;
   const int32_t output_offset = params.output_offset;

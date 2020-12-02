@@ -81,6 +81,7 @@ inline void AveragePool(const PoolParams& params,
                         const uint8_t* input_data,
                         const RuntimeShape& output_shape,
                         uint8_t* output_data) {
+                                            std::cout<<"u average pool\n";
   TFLITE_DCHECK_LE(params.quantized_activation_min,
                    params.quantized_activation_max);
   TFLITE_DCHECK_EQ(input_shape.DimensionsCount(), 4);
@@ -240,6 +241,7 @@ inline void MaxPool(const PoolParams& params, const RuntimeShape& input_shape,
 inline void MaxPool(const PoolParams& params, const RuntimeShape& input_shape,
                     const uint8_t* input_data, const RuntimeShape& output_shape,
                     uint8_t* output_data) {
+                                        std::cout<<"u max pool\n";
   TFLITE_DCHECK_LE(params.quantized_activation_min,
                    params.quantized_activation_max);
   TFLITE_DCHECK_GE(params.quantized_activation_min, 0);

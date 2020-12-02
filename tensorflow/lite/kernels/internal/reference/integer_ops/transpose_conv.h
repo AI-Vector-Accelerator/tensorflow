@@ -29,6 +29,7 @@ inline void TransposeConv(
     const int32* bias_data, const RuntimeShape& output_shape, int8* output_data,
     const RuntimeShape& im2col_shape, int8* im2col_data,
     int32* scratch_buffer) {
+       std::cout<<"TransposeConv\n";
   const int stride_width = params.stride_width;
   const int stride_height = params.stride_height;
   const int pad_width = params.padding_values.width;

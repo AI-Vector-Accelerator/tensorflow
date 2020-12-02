@@ -16,7 +16,7 @@ limitations under the License.
 #define TENSORFLOW_LITE_KERNELS_INTERNAL_REFERENCE_MUL_H_
 
 #include "tensorflow/lite/kernels/internal/common.h"
-
+#include <iostream>
 namespace tflite {
 
 namespace reference_ops {
@@ -26,6 +26,7 @@ namespace reference_ops {
 inline void MulElementwise(int size, const ArithmeticParams& params,
                            const uint8_t* input1_data,
                            const uint8_t* input2_data, uint8_t* output_data) {
+                               std::cout<<" u MulElementwise\n";
   for (int i = 0; i < size; ++i) {
     const int32_t input1_val = params.input1_offset + input1_data[i];
     const int32_t input2_val = params.input2_offset + input2_data[i];
@@ -63,6 +64,7 @@ inline void Mul(const ArithmeticParams& params,
                 const RuntimeShape& input1_shape, const uint8_t* input1_data,
                 const RuntimeShape& input2_shape, const uint8_t* input2_data,
                 const RuntimeShape& output_shape, uint8_t* output_data) {
+                   std::cout<<" u Mul\n";
   TFLITE_DCHECK_LE(params.quantized_activation_min,
                    params.quantized_activation_max);
   const int flat_size =

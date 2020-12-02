@@ -17,7 +17,7 @@ limitations under the License.
 
 #include "fixedpoint/fixedpoint.h"
 #include "tensorflow/lite/kernels/internal/common.h"
-
+#include <iostream>
 namespace tflite {
 
 namespace reference_ops {
@@ -93,6 +93,7 @@ inline void AddElementwise(int size, const ArithmeticParams& params,
 inline void AddScalarBroadcast(int size, const ArithmeticParams& params,
                                uint8_t input1_data, const uint8_t* input2_data,
                                uint8_t* output_data) {
+                                 std::cout<<" u AddScalarBroadcast\n";
   TFLITE_DCHECK_GT(params.input1_offset, -256);
   TFLITE_DCHECK_GT(params.input2_offset, -256);
   TFLITE_DCHECK_LT(params.input1_offset, 256);
@@ -125,6 +126,7 @@ inline void Add(const ArithmeticParams& params,
                 const RuntimeShape& input1_shape, const uint8_t* input1_data,
                 const RuntimeShape& input2_shape, const uint8_t* input2_data,
                 const RuntimeShape& output_shape, uint8_t* output_data) {
+    std::cout<<" u Add\n";
   TFLITE_DCHECK_LE(params.quantized_activation_min,
                    params.quantized_activation_max);
   const int flat_size =
