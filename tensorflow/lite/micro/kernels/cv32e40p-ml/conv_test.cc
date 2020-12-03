@@ -77,12 +77,10 @@ TfLiteStatus InvokeConv(TfLiteTensor* tensors, int tensors_size, T* output_data,
     return status;
   }
   
-  //std::cout<<"	Invoke conv\n";
   startCycles=getCycles();
   output = runner.Invoke();
   endCycles=getCycles();
   cyclesToRun=endCycles-startCycles;
- // std::cout<<"	conv finished\n";
   std::cout<<"	Convolution finished, cyclesToRun = "<<cyclesToRun<<std::endl;
   
   return output;
