@@ -7,7 +7,6 @@
 #include "tensorflow/lite/kernels/internal/types.h"
 #include "fixedpoint/fixedpoint.h"
 
-#include <iostream>
 #include <vector>
 #include "vector_operations.h"
 
@@ -30,7 +29,6 @@ inline void AddElementwise(int size, const ArithmeticParams& params,
                            const int8_t* input1_data, const int8_t* input2_data,
                            int8_t* output_data) {
   CheckArithmeticParams(params);
-
   std::vector<int32_t> input1_temp, input2_temp;
   input1_temp.resize(size);
   input2_temp.resize(size);
