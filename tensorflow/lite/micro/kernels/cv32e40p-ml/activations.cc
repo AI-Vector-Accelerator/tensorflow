@@ -119,15 +119,19 @@ inline void Relu6Float(const RuntimeShape& input_shape, const float* input_data,
     const float clamped = val > upper ? upper : val < lower ? lower : val;
     output_data[i] = clamped;
   }
+    
 }
 
-inline void Relu6Quantized(uint8_t lower, uint8_t upper, const RuntimeShape& input_shape,
-                           const uint8_t* input_data,
-                           const RuntimeShape& output_shape, uint8_t* output_data) {
-
-  const unsigned int flat_size = MatchingFlatSize(input_shape, output_shape);
-  vect_ReLu6_Bound_unsigned(flat_size, input_data, output_data,lower,upper); 
-
+template <typename Q>
+inline void Relu6Quantized(Q lower, Q upper, const RuntimeShape& input_shape,
+                           const Q* input_data,
+                           const RuntimeShape& output_shape, Q* output_data) {
+  const int flat_size = MatchingFlatSize(input_shape, output_shape);
+  for (int i = 0; i < flat_size; ++i) {
+    const Q val = input_data[i];
+    const Q clamped = val > upper ? upper : val < lower ? lower : val;
+    output_data[i] = clamped;
+  }
 }
 
 
