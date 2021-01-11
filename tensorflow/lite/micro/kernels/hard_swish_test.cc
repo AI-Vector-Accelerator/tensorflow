@@ -141,12 +141,26 @@ void TestHardSwishQuantizedBias(const int size, const T* output_data,
 
   // In this bias-focused test case, no need for randomly generated input
   // values.
+
+  #ifdef CV32E40P
+  TF_LITE_MICRO_EXPECT_LE(input_min, -3.0f);
+  TF_LITE_MICRO_EXPECT_GE(input_max, 3.0f);
+  const int quantized_input_negative_three = round(
+      std::numeric_limits<T>::min() + (-3.0f - input_min) / input_scale);
+  const int quantized_input_positive_three = round(
+      std::numeric_limits<T>::min() + (3.0f - input_min) / input_scale);
+
+#else
+  
   TF_LITE_MICRO_EXPECT_LE(input_min, -3.0f);
   TF_LITE_MICRO_EXPECT_GE(input_max, 3.0f);
   const int quantized_input_negative_three = std::round(
       std::numeric_limits<T>::min() + (-3.0f - input_min) / input_scale);
   const int quantized_input_positive_three = std::round(
       std::numeric_limits<T>::min() + (3.0f - input_min) / input_scale);
+
+#endif //CV32E40P
+
 
   for (int i = quantized_input_negative_three;
        i < size && i <= quantized_input_positive_three; i++) {

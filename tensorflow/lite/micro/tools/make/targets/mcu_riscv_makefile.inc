@@ -36,9 +36,7 @@ ifeq ($(TARGET), mcu_riscv)
     -Wno-write-strings \
     -Wunused-function \
     -fno-delete-null-pointer-checks \
-    -fno-threadsafe-statics \
     -fomit-frame-pointer \
-    -fno-use-cxa-atexit \
     -Os
 
 
@@ -54,7 +52,9 @@ ifeq ($(TARGET), mcu_riscv)
   CXXFLAGS += $(PLATFORM_FLAGS) \
     -fpermissive \
     -fno-rtti \
-    --std=gnu++11
+    --std=gnu++11 \
+    -fno-use-cxa-atexit \
+    -fno-threadsafe-statics 
 
   CCFLAGS += $(PLATFORM_FLAGS)
 
@@ -71,12 +71,23 @@ ifeq ($(TARGET), mcu_riscv)
 
   # Set the linking instructions for each supported architecture
   ifeq ($(TARGET_ARCH), cv32e40p)
-    LDFLAGS += -L $(MAKEFILE_DIR)/targets/cv32e40p \
-      -l cv-verif \
-      -T $(MAKEFILE_DIR)/targets/cv32e40p/link.ld \
-      -nostartfiles \
-      $(MAKEFILE_DIR)/targets/cv32e40p/crtbegin.o \
-      --specs=nano.specs -u _printf_float
+
+    ifneq (,$(findstring spike,$(TAGS)))
+      LDFLAGS += --specs=nano.specs -u _printf_float
+    else
+      LDFLAGS += -L $(MAKEFILE_DIR)/targets/cv32e40p \
+        -l cv-verif \
+        -T $(MAKEFILE_DIR)/targets/cv32e40p/link.ld \
+        -nostartfiles \
+        $(MAKEFILE_DIR)/targets/cv32e40p/crtbegin.o \
+        --specs=nano.specs -u _printf_float
+    endif
+
+    ifneq (,$(findstring cv32e40p-ml, $(TAGS)))
+      MICROLITE_LIB_OBJS += \
+        $(MAKEFILE_DIR)/targets/cv32e40p/vector_operations.o \
+        $(MAKEFILE_DIR)/targets/cv32e40p/vector_operations_assembly.o 
+    endif
 
   else
     LDFLAGS += \
