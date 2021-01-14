@@ -95,7 +95,7 @@ void AverageEvalQuantized(TfLiteContext* context, const TfLiteNode* node,
   op_params.quantized_activation_max = data->activation_max;
 
   if (input->type == kTfLiteUInt8) {
-    AveragePool(op_params, tflite::micro::GetTensorShape(input),
+    reference_ops::AveragePool(op_params, tflite::micro::GetTensorShape(input),
                                tflite::micro::GetTensorData<uint8_t>(input),
                                tflite::micro::GetTensorShape(output),
                                tflite::micro::GetTensorData<uint8_t>(output));
@@ -139,7 +139,7 @@ void MaxEvalQuantized(TfLiteContext* context, TfLiteNode* node,
   op_params.quantized_activation_max = data->activation_max;
 
   if (input->type == kTfLiteUInt8) {   
-    MaxPool(op_params, tflite::micro::GetTensorShape(input),
+    reference_ops::MaxPool(op_params, tflite::micro::GetTensorShape(input),
                            tflite::micro::GetTensorData<uint8_t>(input),
                            tflite::micro::GetTensorShape(output),
                            tflite::micro::GetTensorData<uint8_t>(output));
