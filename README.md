@@ -1,6 +1,6 @@
 # AVA TensorFlow Fork
-### For details on compiling for the standard and accelerated CV32E40P see the the readme here:
-./tensorflow/lite/micro/kernels/cv32e40p-ml
+### For details on compiling for the standard and accelerated CV32E40P see the the readme [here](tensorflow/lite/micro/kernels/cv32e40p-ml/README.md):
+
 
 
 <div align="center">
